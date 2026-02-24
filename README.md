@@ -1,36 +1,151 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PetPass Malaysia 🐾
+
+Malaysia's first all-in-one pet management platform. One QR code. Your pet's full medical history. Instant lost pet alerts.
+
+## Features
+
+- **Digital Pet Passport** - Store all your pet's information in one place
+- **QR Code Generation** - Unique QR code for each pet for easy identification
+- **Vaccination Records** - Keep track of vaccinations with automatic reminders
+- **Lost Pet Alerts** - Mark pets as lost to alert the community
+- **Pet-Friendly Directory** - Find pet-friendly places in Malaysia (coming soon)
+
+## Tech Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **Database:** Supabase
+- **Styling:** Tailwind CSS
+- **Authentication:** Supabase Auth
+- **QR Generation:** qrcode
+
+## Prerequisites
+
+- Node.js 18+
+- npm or yarn
+- Supabase account
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone and Install
+
+```bash
+cd petpass-malaysia
+npm install
+```
+
+### 2. Set Up Supabase
+
+Follow the instructions in [SUPABASE-SETUP.md](./SUPABASE-SETUP.md) to:
+
+1. Create a Supabase project
+2. Run the SQL schema
+3. Get your API keys
+
+### 3. Configure Environment Variables
+
+Copy `.env.local.example` to `.env.local` and add your Supabase credentials:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Edit `.env.local` with your values:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### 4. Run Locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000) to see the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+petpass-malaysia/
+├── app/
+│   ├── page.tsx              # Landing page
+│   ├── login/                # Login/Signup page
+│   ├── dashboard/            # User dashboard (protected)
+│   ├── pets/
+│   │   ├── new/              # Add new pet
+│   │   └── [id]/             # Pet profile
+│   │       └── vaccinations/
+│   │           └── new/     # Add vaccination
+│   └── scan/
+│       └── [petId]/         # Public scan page (QR landing)
+├── components/               # React components
+├── lib/
+│   └── supabase.ts          # Supabase client
+├── middleware.ts            # Auth middleware
+└── SUPABASE-SETUP.sql       # Database Deployment to schema
+```
 
-## Learn More
+## Vercel
 
-To learn more about Next.js, take a look at the following resources:
+### Option 1: Deploy from Vercel Dashboard
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Push your code to GitHub
+2. Go to [vercel.com](https://vercel.com) and sign in
+3. Click "Add New..." → "Project"
+4. Import your GitHub repository
+5. Add the environment variables:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+6. Click "Deploy"
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Option 2: Deploy from CLI
 
-## Deploy on Vercel
+```bash
+# Install Vercel CLI
+npm i -g vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Deploy
+vercel
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Follow the prompts to complete deployment.
+
+### Option 3: Deploy from GitHub (CI/CD)
+
+1. Push code to GitHub
+2. Go to Vercel Dashboard
+3. Import repository
+4. Vercel automatically deploys on every push to main branch
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon/public key |
+
+## Supabase Setup Steps
+
+### 1. Create Project
+- Go to [supabase.com](https://supabase.com)
+- Create new project "PetPass Malaysia"
+
+### 2. Run SQL
+- Open SQL Editor in Supabase dashboard
+- Copy and run the contents of `SUPABASE-SETUP.sql`
+
+### 3. Get Credentials
+- Go to Project Settings → API
+- Copy Project URL and anon key
+
+### 4. Update .env.local
+- Paste your credentials
+
+## License
+
+MIT
+
+---
+
+Built with ❤️ for Malaysian pet owners
