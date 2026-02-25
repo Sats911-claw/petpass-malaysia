@@ -15,11 +15,13 @@ create table if not exists waitlist (
 alter table waitlist enable row level security;
 
 -- Allow anyone to submit to waitlist
+drop policy if exists "Anyone can join waitlist" on waitlist;
 create policy "Anyone can join waitlist"
 on waitlist for insert
 with check (true);
 
 -- Allow public to view waitlist count (for social proof)
+drop policy if exists "Public can view waitlist count" on waitlist;
 create policy "Public can view waitlist count"
 on waitlist for select
 using (true);
@@ -76,17 +78,20 @@ values ('pet-photos', 'pet-photos', true)
 on conflict (id) do nothing;
 
 -- Allow authenticated users to upload photos
+drop policy if exists "Users can upload pet photos" on storage.objects;
 create policy "Users can upload pet photos"
 on storage.objects for insert
 to authenticated
 with check (bucket_id = 'pet-photos');
 
 -- Allow anyone to view pet photos
+drop policy if exists "Anyone can view pet photos" on storage.objects;
 create policy "Anyone can view pet photos"
 on storage.objects for select
 using (bucket_id = 'pet-photos');
 
 -- Allow owners to delete their photos
+drop policy if exists "Users can delete their pet photos" on storage.objects;
 create policy "Users can delete their pet photos"
 on storage.objects for delete
 to authenticated
