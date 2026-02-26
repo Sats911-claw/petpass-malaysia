@@ -21,6 +21,9 @@ interface Pet {
   owner_phone: string
   owner_email: string
   owner_id: string
+  license_number: string
+  license_expiry: string
+  license_authority: string
 }
 
 interface Vaccination {
@@ -279,6 +282,50 @@ export default function PetProfilePage() {
                   )}
                 </div>
               </div>
+
+              {/* License Card */}
+              {pet.license_number && (() => {
+                const today = new Date()
+                const expiry = pet.license_expiry ? new Date(pet.license_expiry) : null
+                const daysLeft = expiry ? Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)) : null
+                const isExpired = daysLeft !== null && daysLeft < 0
+                const isExpiringSoon = daysLeft !== null && daysLeft >= 0 && daysLeft <= 30
+                const statusColor = isExpired ? '#ef4444' : isExpiringSoon ? '#f59e0b' : '#0d9488'
+                const statusLabel = isExpired ? '⚠️ EXPIRED' : isExpiringSoon ? `⏳ Expires in ${daysLeft}d` : '✅ Valid'
+                return (
+                  <div className="bg-white/5 border rounded-2xl p-6" style={{ borderColor: statusColor + '44' }}>
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-lg font-semibold text-white">🪪 Municipal License</h2>
+                      <span style={{ background: statusColor + '22', color: statusColor, fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 6 }}>
+                        {statusLabel}
+                      </span>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">License No.</span>
+                        <span className="text-white font-mono text-sm">{pet.license_number}</span>
+                      </div>
+                      {pet.license_authority && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Issued by</span>
+                          <span className="text-white">{pet.license_authority}</span>
+                        </div>
+                      )}
+                      {expiry && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Expires</span>
+                          <span style={{ color: statusColor }}>{expiry.toLocaleDateString('en-MY', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                        </div>
+                      )}
+                    </div>
+                    {(isExpired || isExpiringSoon) && (
+                      <div style={{ marginTop: 12, padding: '10px 14px', background: statusColor + '15', borderRadius: 8, fontSize: 13, color: statusColor }}>
+                        {isExpired ? '⚠️ This license has expired. Renew with your local council to avoid fines.' : `⏳ License expires in ${daysLeft} days. Renew soon to avoid fines.`}
+                      </div>
+                    )}
+                  </div>
+                )
+              })()}
 
               {/* Owner Actions (only for owner) */}
               {isOwner && (

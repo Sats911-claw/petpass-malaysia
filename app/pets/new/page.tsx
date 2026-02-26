@@ -15,6 +15,9 @@ interface FormData {
   microchip: string
   owner_phone: string
   owner_email: string
+  license_number: string
+  license_expiry: string
+  license_authority: string
 }
 
 export default function NewPetPage() {
@@ -28,6 +31,9 @@ export default function NewPetPage() {
     microchip: '',
     owner_phone: '',
     owner_email: '',
+    license_number: '',
+    license_expiry: '',
+    license_authority: '',
   })
   const [photo, setPhoto] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
@@ -115,6 +121,9 @@ export default function NewPetPage() {
           photo_url: photoUrl,
           owner_phone: formData.owner_phone,
           owner_email: formData.owner_email,
+          license_number: formData.license_number || null,
+          license_expiry: formData.license_expiry || null,
+          license_authority: formData.license_authority || null,
         })
         .select()
         .single()
@@ -348,6 +357,56 @@ export default function NewPetPage() {
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all"
                     placeholder="you@example.com"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* License Info */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+              <h2 className="text-lg font-semibold text-white mb-1">Municipal License</h2>
+              <p className="text-gray-500 text-sm mb-4">Optional — required by local councils (DBKL, MBPJ, MBSA, etc.)</p>
+              <div className="space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">License Number</label>
+                    <input
+                      type="text"
+                      name="license_number"
+                      value={formData.license_number}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-teal-500 transition-all"
+                      placeholder="e.g., DBKL/2024/12345"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Issuing Authority</label>
+                    <select
+                      name="license_authority"
+                      value={formData.license_authority}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-teal-500 transition-all"
+                    >
+                      <option value="">Select authority</option>
+                      <option value="DBKL">DBKL (Kuala Lumpur)</option>
+                      <option value="MBPJ">MBPJ (Petaling Jaya)</option>
+                      <option value="MBSA">MBSA (Shah Alam)</option>
+                      <option value="MBSJ">MBSJ (Subang Jaya)</option>
+                      <option value="MPAJ">MPAJ (Ampang Jaya)</option>
+                      <option value="MPSJ">MPSJ (Sepang)</option>
+                      <option value="MBK">MBK (Klang)</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">License Expiry Date</label>
+                  <input
+                    type="date"
+                    name="license_expiry"
+                    value={formData.license_expiry}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-teal-500 transition-all"
                   />
                 </div>
               </div>
