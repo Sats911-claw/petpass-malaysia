@@ -331,6 +331,14 @@ export default function PetProfilePage() {
               {isOwner && (
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
                   <h2 className="text-lg font-semibold text-white">Owner Actions</h2>
+
+                  <a
+                    href={`/pets/${pet.id}/passport`}
+                    target="_blank"
+                    className="w-full py-3 px-4 rounded-xl font-medium transition-all bg-white/10 hover:bg-white/20 text-white flex items-center justify-center gap-2"
+                  >
+                    🖨️ Export Pet Passport (PDF)
+                  </a>
                   
                   <button
                     onClick={toggleLostStatus}
