@@ -48,10 +48,12 @@ export default function Home() {
               <span className="text-xl font-bold text-white">PetPass Malaysia</span>
             </div>
             <a
-              href="#waitlist"
-              className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors"
+              href="https://clinic.petpass.my"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-teal-500 hover:bg-teal-400 text-black px-4 py-2 rounded-full text-sm font-semibold transition-colors border border-teal-400"
             >
-              Join Waitlist
+              🏥 PetPass Clinic Portal
             </a>
           </div>
         </div>
