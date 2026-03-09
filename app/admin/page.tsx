@@ -2,23 +2,27 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
+import Link from 'next/link'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'petpass2026'
+const ADMIN_USERNAME = 'sats911'
+const ADMIN_PASSWORD = 'Pagani911$'
 
-type Tab = 'waitlist' | 'users' | 'pets'
+type Tab = 'waitlist' | 'users' | 'pets' | 'merchants'
 
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false)
+  const [username, setUsername] = useState('')
   const [pw, setPw] = useState('')
   const [error, setError] = useState('')
   const [tab, setTab] = useState<Tab>('waitlist')
   const [waitlist, setWaitlist] = useState<any[]>([])
   const [pets, setPets] = useState<any[]>([])
+  const [merchants, setMerchants] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -38,17 +42,26 @@ export default function AdminPage() {
     } else if (tab === 'pets') {
       const { data } = await supabase.from('pets').select('*').order('created_at', { ascending: false })
       setPets(data || [])
+    } else if (tab === 'merchants') {
+      const { data } = await supabase.from('merchants').select('*').order('created_at', { ascending: false })
+      setMerchants(data || [])
     }
     setLoading(false)
   }
 
   function login() {
-    if (pw === ADMIN_PASSWORD) {
+    if (username === ADMIN_USERNAME && pw === ADMIN_PASSWORD) {
       sessionStorage.setItem('admin_authed', 'true')
       setAuthed(true)
+      setError('')
     } else {
-      setError('Wrong password')
+      setError('Invalid username or password')
     }
+  }
+
+  async function updateMerchantStatus(merchantId: string, status: string) {
+    await supabase.from('merchants').update({ status }).eq('id', merchantId)
+    fetchData()
   }
 
   function exportCSV() {
@@ -67,6 +80,14 @@ export default function AdminPage() {
         <h1 style={{ color: '#fff', fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Admin Access</h1>
         <p style={{ color: '#666', fontSize: 14, marginBottom: 24 }}>PetPass Malaysia</p>
         <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && login()}
+          style={{ width: '100%', padding: '12px 16px', background: '#1a1a1a', border: '1px solid #333', borderRadius: 8, color: '#fff', fontSize: 15, marginBottom: 12, boxSizing: 'border-box' }}
+        />
+        <input
           type="password"
           placeholder="Password"
           value={pw}
@@ -83,6 +104,8 @@ export default function AdminPage() {
   )
 
   const lostCount = pets.filter(p => p.is_lost).length
+  const pendingMerchants = merchants.filter(m => m.status === 'pending').length
+  const activeMerchants = merchants.filter(m => m.status === 'active').length
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', fontFamily: 'system-ui, sans-serif' }}>
@@ -92,21 +115,24 @@ export default function AdminPage() {
           <span style={{ fontSize: 20, fontWeight: 700 }}>🐾 PetPass Admin</span>
           <span style={{ marginLeft: 12, fontSize: 12, color: '#666', background: '#1a1a1a', padding: '2px 8px', borderRadius: 4 }}>Internal</span>
         </div>
-        <button onClick={() => { sessionStorage.removeItem('admin_authed'); setAuthed(false) }} style={{ background: 'transparent', border: '1px solid #333', color: '#666', padding: '6px 14px', borderRadius: 6, cursor: 'pointer', fontSize: 13 }}>
-          Logout
-        </button>
+        <div style={{ display: 'flex', gap: 12 }}>
+          <Link href="/merchant/login" style={{ color: '#0d9488', textDecoration: 'none', fontSize: 13, padding: '6px 14px', border: '1px solid #0d9488', borderRadius: 6 }}>Merchant Portal</Link>
+          <button onClick={() => { sessionStorage.removeItem('admin_authed'); setAuthed(false) }} style={{ background: 'transparent', border: '1px solid #333', color: '#666', padding: '6px 14px', borderRadius: 6, cursor: 'pointer', fontSize: 13 }}>
+            Logout
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
       <div style={{ padding: '0 32px', borderBottom: '1px solid #1a1a1a', display: 'flex', gap: 0 }}>
-        {(['waitlist', 'pets'] as Tab[]).map(t => (
+        {(['waitlist', 'pets', 'merchants'] as Tab[]).map(t => (
           <button key={t} onClick={() => setTab(t)} style={{
             padding: '14px 24px', background: 'transparent', border: 'none',
             borderBottom: tab === t ? '2px solid #0d9488' : '2px solid transparent',
             color: tab === t ? '#0d9488' : '#666', fontWeight: tab === t ? 600 : 400,
             fontSize: 14, cursor: 'pointer', textTransform: 'capitalize'
           }}>
-            {t === 'waitlist' ? `Waitlist (${waitlist.length})` : `Pets (${pets.length})`}
+            {t === 'waitlist' ? `Waitlist (${waitlist.length})` : t === 'pets' ? `Pets (${pets.length})` : `Merchants (${merchants.length})`}
           </button>
         ))}
       </div>
@@ -150,7 +176,7 @@ export default function AdminPage() {
               </table>
             </div>
           </>
-        ) : (
+        ) : tab === 'pets' ? (
           <>
             <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
               <div style={{ background: '#111', border: '1px solid #1a1a1a', borderRadius: 10, padding: '16px 24px' }}>
@@ -190,6 +216,76 @@ export default function AdminPage() {
                   ))}
                   {pets.length === 0 && (
                     <tr><td colSpan={6} style={{ padding: 40, textAlign: 'center', color: '#444' }}>No pets registered yet</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
+        ) : (
+          /* Merchants Tab */
+          <>
+            <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
+              <div style={{ background: '#111', border: '1px solid #1a1a1a', borderRadius: 10, padding: '16px 24px' }}>
+                <div style={{ fontSize: 28, fontWeight: 700 }}>{merchants.length}</div>
+                <div style={{ color: '#666', fontSize: 13 }}>Total Merchants</div>
+              </div>
+              <div style={{ background: '#0d9488', border: '1px solid #0d9488', borderRadius: 10, padding: '16px 24px' }}>
+                <div style={{ fontSize: 28, fontWeight: 700 }}>{activeMerchants}</div>
+                <div style={{ color: '#fff', fontSize: 13 }}>Active</div>
+              </div>
+              {pendingMerchants > 0 && (
+                <div style={{ background: '#1a1a0a', border: '1px solid #eab308', borderRadius: 10, padding: '16px 24px' }}>
+                  <div style={{ fontSize: 28, fontWeight: 700, color: '#eab308' }}>{pendingMerchants}</div>
+                  <div style={{ color: '#eab308', fontSize: 13 }}>Pending Approval</div>
+                </div>
+              )}
+            </div>
+            <div style={{ background: '#111', borderRadius: 12, border: '1px solid #1a1a1a', overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #1a1a1a' }}>
+                    {['Name', 'Type', 'Contact', 'Location', 'Status', 'Joined', 'Actions'].map(h => (
+                      <th key={h} style={{ padding: '12px 20px', textAlign: 'left', color: '#666', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {merchants.map((m, i) => (
+                    <tr key={m.id} style={{ borderBottom: i < merchants.length - 1 ? '1px solid #1a1a1a' : 'none' }}>
+                      <td style={{ padding: '14px 20px', color: '#fff', fontSize: 14, fontWeight: 600 }}>{m.name}</td>
+                      <td style={{ padding: '14px 20px', color: '#aaa', fontSize: 14, textTransform: 'capitalize' }}>{m.type?.replace('_', ' ') || '—'}</td>
+                      <td style={{ padding: '14px 20px', color: '#0d9488', fontSize: 14 }}>{m.phone || '—'}</td>
+                      <td style={{ padding: '14px 20px', color: '#aaa', fontSize: 13, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.address || '—'}</td>
+                      <td style={{ padding: '14px 20px' }}>
+                        {m.status === 'active' 
+                          ? <span style={{ background: '#0d9488', color: '#fff', fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 4 }}>ACTIVE</span>
+                          : m.status === 'pending'
+                          ? <span style={{ background: '#eab308', color: '#000', fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 4 }}>PENDING</span>
+                          : <span style={{ background: '#ef4444', color: '#fff', fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 4 }}>REJECTED</span>}
+                      </td>
+                      <td style={{ padding: '14px 20px', color: '#666', fontSize: 13 }}>{new Date(m.created_at).toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+                      <td style={{ padding: '14px 20px' }}>
+                        {m.status === 'pending' && (
+                          <div style={{ display: 'flex', gap: 8 }}>
+                            <button 
+                              onClick={() => updateMerchantStatus(m.id, 'active')}
+                              style={{ background: '#0d9488', border: 'none', color: '#fff', fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 4, cursor: 'pointer' }}
+                            >
+                              Approve
+                            </button>
+                            <button 
+                              onClick={() => updateMerchantStatus(m.id, 'rejected')}
+                              style={{ background: '#ef4444', border: 'none', color: '#fff', fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 4, cursor: 'pointer' }}
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                  {merchants.length === 0 && (
+                    <tr><td colSpan={7} style={{ padding: 40, textAlign: 'center', color: '#444' }}>No merchants yet. Run the SQL to add merchants.</td></tr>
                   )}
                 </tbody>
               </table>

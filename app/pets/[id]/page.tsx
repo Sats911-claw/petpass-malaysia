@@ -36,14 +36,46 @@ interface Vaccination {
   notes: string
 }
 
+interface MedicalRecord {
+  id: string
+  record_type: string
+  title: string
+  medication_name: string
+  dosage: string
+  frequency: string
+  vet_name: string
+  clinic_name: string
+  performed_at: string
+  next_followup: string
+  notes: string
+}
+
+interface HealthRecord {
+  type: 'vaccination' | 'checkup' | 'medication' | 'procedure' | 'other'
+  id: string
+  title: string
+  date: string
+  nextDue?: string
+  vetName?: string
+  clinic?: string
+  notes?: string
+  medicationName?: string
+  dosage?: string
+  frequency?: string
+}
+
+type TabType = 'all' | 'vaccinations' | 'medications' | 'procedures'
+
 export default function PetProfilePage() {
   const [pet, setPet] = useState<Pet | null>(null)
   const [vaccinations, setVaccinations] = useState<Vaccination[]>([])
+  const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([])
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
   const [updating, setUpdating] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [activeTab, setActiveTab] = useState<TabType>('all')
   const router = useRouter()
   const params = useParams()
   const supabase = createClient()
@@ -94,6 +126,14 @@ export default function PetProfilePage() {
           .eq('pet_id', petId)
           .order('date_given', { ascending: false })
         setVaccinations(vaccData || [])
+
+        // Fetch medical records (only for owner)
+        const { data: recordsData } = await supabase
+          .from('pet_medical_records')
+          .select('*')
+          .eq('pet_id', petId)
+          .order('performed_at', { ascending: false })
+        setMedicalRecords(recordsData || [])
       }
     } catch (err) {
       console.error('Error fetching pet:', err)
@@ -358,11 +398,18 @@ export default function PetProfilePage() {
                   >
                     Add Vaccination Record
                   </Link>
+
+                  <Link
+                    href={`/pets/${pet.id}/medical/new`}
+                    className="block w-full py-3 px-4 bg-teal-600 hover:bg-teal-700 text-white text-center rounded-xl font-medium transition-all"
+                  >
+                    Add Health Record
+                  </Link>
                 </div>
               )}
             </div>
 
-            {/* QR Code & Vaccinations */}
+            {/* QR Code & Health Records */}
             <div className="space-y-6">
               {/* QR Code Card */}
               <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
@@ -385,41 +432,129 @@ export default function PetProfilePage() {
                 )}
               </div>
 
-              {/* Vaccinations */}
+              {/* Health Records with Tabs */}
               <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                <h2 className="text-lg font-semibold text-white mb-4">Vaccination Records</h2>
-                {vaccinations.length === 0 ? (
-                  <p className="text-gray-400 text-center py-4">
-                    {isOwner ? 'No vaccination records yet' : 'No public vaccination records'}
-                  </p>
-                ) : (
-                  <div className="space-y-4">
-                    {vaccinations.map((vacc) => (
-                      <div key={vacc.id} className="border-b border-white/10 pb-4 last:border-0">
-                        <div className="flex justify-between items-start mb-1">
-                          <h3 className="text-white font-medium">{vacc.vaccine_name}</h3>
-                          <span className="text-xs text-gray-500">
-                            {vacc.next_due && new Date(vacc.next_due) < new Date() ? '⚠️ Due' : ''}
-                          </span>
-                        </div>
-                        <p className="text-gray-400 text-sm">
-                          Given: {formatDate(vacc.date_given)}
-                        </p>
-                        {vacc.next_due && (
+                {/* Tab Bar */}
+                <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+                  {[
+                    { id: 'all', label: 'All' },
+                    { id: 'vaccinations', label: 'Vaccinations' },
+                    { id: 'medications', label: 'Medications' },
+                    { id: 'procedures', label: 'Procedures & Surgery' },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id as TabType)}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+                        activeTab === tab.id
+                          ? 'bg-teal-600 text-white'
+                          : 'bg-white/10 text-gray-400 hover:text-white hover:bg-white/20'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Records List */}
+                {(() => {
+                  // Combine and filter records
+                  const allRecords: HealthRecord[] = [
+                    ...vaccinations.map(v => ({
+                      type: 'vaccination' as const,
+                      id: v.id,
+                      title: v.vaccine_name,
+                      date: v.date_given,
+                      nextDue: v.next_due,
+                      vetName: v.vet_name,
+                      clinic: v.clinic,
+                      notes: v.notes,
+                    })),
+                    ...medicalRecords.map(m => ({
+                      type: m.record_type as HealthRecord['type'],
+                      id: m.id,
+                      title: m.title,
+                      date: m.performed_at,
+                      nextDue: m.next_followup,
+                      vetName: m.vet_name,
+                      clinic: m.clinic_name,
+                      notes: m.notes,
+                      medicationName: m.medication_name,
+                      dosage: m.dosage,
+                      frequency: m.frequency,
+                    })),
+                  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+
+                  // Filter by tab
+                  const filteredRecords = allRecords.filter(record => {
+                    if (activeTab === 'all') return true
+                    if (activeTab === 'vaccinations') return record.type === 'vaccination'
+                    if (activeTab === 'medications') return record.type === 'medication' || record.type === 'checkup'
+                    if (activeTab === 'procedures') return record.type === 'procedure' || record.type === 'other'
+                    return true
+                  })
+
+                  const getTypeBadge = (type: string) => {
+                    const badges: Record<string, { emoji: string; bg: string; text: string }> = {
+                      vaccination: { emoji: '💉', bg: 'bg-teal-500/20', text: 'text-teal-400' },
+                      medication: { emoji: '💊', bg: 'bg-blue-500/20', text: 'text-blue-400' },
+                      procedure: { emoji: '🔪', bg: 'bg-orange-500/20', text: 'text-orange-400' },
+                      checkup: { emoji: '🩺', bg: 'bg-green-500/20', text: 'text-green-400' },
+                      other: { emoji: '📋', bg: 'bg-gray-500/20', text: 'text-gray-400' },
+                    }
+                    const badge = badges[type] || badges.other
+                    return (
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${badge.bg} ${badge.text}`}>
+                        {badge.emoji} {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </span>
+                    )
+                  }
+
+                  if (filteredRecords.length === 0) {
+                    return (
+                      <p className="text-gray-400 text-center py-4">
+                        {isOwner ? 'No health records yet' : 'No public health records'}
+                      </p>
+                    )
+                  }
+
+                  return (
+                    <div className="space-y-4">
+                      {filteredRecords.map((record) => (
+                        <div key={record.id} className="border-b border-white/10 pb-4 last:border-0">
+                          <div className="flex justify-between items-start mb-2">
+                            <h3 className="text-white font-medium">{record.title}</h3>
+                            {getTypeBadge(record.type)}
+                          </div>
                           <p className="text-gray-400 text-sm">
-                            Next due: {formatDate(vacc.next_due)}
+                            Date: {formatDate(record.date)}
                           </p>
-                        )}
-                        {(vacc.vet_name || vacc.clinic) && (
-                          <p className="text-gray-500 text-xs mt-1">
-                            {vacc.vet_name && `Dr. ${vacc.vet_name}`}
-                            {vacc.clinic && ` @ ${vacc.clinic}`}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                          {record.nextDue && (
+                            <p className="text-gray-400 text-sm">
+                              Next: {formatDate(record.nextDue)}
+                            </p>
+                          )}
+                          {(record.vetName || record.clinic) && (
+                            <p className="text-gray-500 text-xs mt-1">
+                              {record.vetName && `Dr. ${record.vetName}`}
+                              {record.clinic && ` @ ${record.clinic}`}
+                            </p>
+                          )}
+                          {record.medicationName && (
+                            <p className="text-blue-400 text-xs mt-1">
+                              💊 {record.medicationName}
+                              {record.dosage && ` - ${record.dosage}`}
+                              {record.frequency && ` (${record.frequency})`}
+                            </p>
+                          )}
+                          {record.notes && (
+                            <p className="text-gray-500 text-xs mt-2 italic">{record.notes}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )
+                })()}
               </div>
             </div>
           </div>
