@@ -24,6 +24,7 @@ interface Pet {
   license_number: string
   license_expiry: string
   license_authority: string
+  pet_uid: string
 }
 
 interface Vaccination {
@@ -419,9 +420,17 @@ export default function PetProfilePage() {
                     <img src={qrCodeUrl} alt="QR Code" className="rounded-lg" />
                   )}
                 </div>
-                <p className="text-gray-400 text-sm text-center mb-4">
+                <p className="text-gray-400 text-sm text-center mb-2">
                   Scan this code to view pet info
                 </p>
+                {pet.pet_uid && (
+                  <div className="flex items-center justify-center gap-2 mb-4">
+                    <span className="text-gray-500 text-xs">Pet ID</span>
+                    <span className="font-mono text-sm font-bold text-teal-400 tracking-widest bg-teal-400/10 px-3 py-1 rounded-full border border-teal-400/30">
+                      {pet.pet_uid}
+                    </span>
+                  </div>
+                )}
                 {isOwner && (
                   <button
                     onClick={downloadQR}
