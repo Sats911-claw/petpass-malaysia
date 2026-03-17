@@ -142,6 +142,8 @@ export default function AdminPage() {
       sessionStorage.setItem('admin_user', SUPERADMIN_USERNAME)
       sessionStorage.setItem('admin_role', 'superadmin')
       setAuthed(true); setCurrentAdmin(SUPERADMIN_USERNAME); setCurrentRole('superadmin'); setLoginError('')
+      // Set cookie for middleware auth
+      document.cookie = 'petpass_superadmin=true; path=/; max-age=86400'
       // update last_login for superadmin if exists in table
       await supabase.from('admin_users').update({ last_login: new Date().toISOString() }).eq('username', SUPERADMIN_USERNAME)
       return
@@ -153,6 +155,8 @@ export default function AdminPage() {
       sessionStorage.setItem('admin_user', data.username)
       sessionStorage.setItem('admin_role', data.role)
       setAuthed(true); setCurrentAdmin(data.username); setCurrentRole(data.role); setLoginError('')
+      // Set cookie for middleware auth
+      document.cookie = 'petpass_superadmin=true; path=/; max-age=86400'
       await supabase.from('admin_users').update({ last_login: new Date().toISOString() }).eq('id', data.id)
     } else {
       setLoginError('Invalid username or password')
@@ -163,6 +167,8 @@ export default function AdminPage() {
     sessionStorage.removeItem('admin_authed')
     sessionStorage.removeItem('admin_user')
     sessionStorage.removeItem('admin_role')
+    // Clear cookie
+    document.cookie = 'petpass_superadmin=; path=/; max-age=0'
     setAuthed(false); setCurrentAdmin(''); setCurrentRole('viewer')
   }
 

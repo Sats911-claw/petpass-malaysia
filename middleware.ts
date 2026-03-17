@@ -25,16 +25,20 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
+  // Check for superadmin cookie (set by admin page after superadmin login)
+  const isSuperadmin = request.cookies.get('petpass_superadmin')?.value === 'true'
+
   const protectedRoutes = ['/dashboard', '/pets', '/vet-finder', '/vets', '/merchant', '/clinic']
   const isProtected = protectedRoutes.some(r => request.nextUrl.pathname.startsWith(r))
 
-  if (isProtected && !user) {
+  // Allow access if logged in via Supabase OR is superadmin
+  if (isProtected && !user && !isSuperadmin) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
-  if (request.nextUrl.pathname === '/login' && user) {
+  if (request.nextUrl.pathname === '/login' && (user || isSuperadmin)) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)
