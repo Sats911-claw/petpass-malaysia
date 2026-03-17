@@ -28,7 +28,7 @@ export async function middleware(request: NextRequest) {
   // Check for superadmin cookie (set by admin page after superadmin login)
   const isSuperadmin = request.cookies.get('petpass_superadmin')?.value === 'true'
 
-  const protectedRoutes = ['/dashboard', '/pets', '/vet-finder', '/vets', '/merchant', '/clinic']
+  const protectedRoutes = ['/dashboard', '/pets', '/merchant', '/clinic']
   const isProtected = protectedRoutes.some(r => request.nextUrl.pathname.startsWith(r))
 
   // Allow access if logged in via Supabase OR is superadmin
