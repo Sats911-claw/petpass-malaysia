@@ -81,7 +81,14 @@ export default function VetFinderPage() {
           <div style={{ fontSize: 40, marginBottom: 8 }}>🏥</div>
           <h1 style={{ fontSize: 32, fontWeight: 800, margin: '0 0 8px' }}>Vet Finder</h1>
           <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 16, margin: '0 0 24px' }}>Find trusted veterinary clinics in Kuala Lumpur & Selangor</p>
-          <button onClick={findNearMe} style={{ background: '#fff', color: '#0d9488', border: 'none', padding: '12px 24px', borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 12 }}>
+            <button onClick={findNearMe} style={{ background: '#fff', color: '#0d9488', border: 'none', padding: '12px 24px', borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              📍 Find Near Me
+            </button>
+            <a href="/vets/join" style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)', padding: '12px 24px', borderRadius: 10, fontWeight: 600, fontSize: 15, cursor: 'pointer', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              🏥 Register Clinic
+            </a>
+          </div>
             📍 Find Vets Near Me
           </button>
         </div>

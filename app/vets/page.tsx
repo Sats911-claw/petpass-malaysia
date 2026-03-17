@@ -395,14 +395,22 @@ export default function VetsDirectoryPage() {
 
         {/* Register CTA */}
         <div className="mt-12 bg-gradient-to-r from-teal-900/20 to-black border border-white/10 rounded-2xl p-6 text-center">
-          <h2 className="text-xl font-semibold mb-2">Are you a Vet?</h2>
-          <p className="text-white/60 mb-4">Register your clinic and start helping pet owners find you</p>
-          <Link
-            href="/vets/register"
-            className="inline-block bg-teal-600 hover:bg-teal-500 text-white px-6 py-2 rounded-lg font-semibold transition"
-          >
-            Register as a Vet
-          </Link>
+          <h2 className="text-xl font-semibold mb-2">Join PetPass Vet Network</h2>
+          <p className="text-white/60 mb-4">Register your clinic or join as a vet</p>
+          <div className="flex justify-center gap-3">
+            <Link
+              href="/vets/join?tab=clinic"
+              className="inline-block bg-teal-600 hover:bg-teal-500 text-white px-6 py-2 rounded-lg font-semibold transition"
+            >
+              🏥 Register Clinic
+            </Link>
+            <Link
+              href="/vets/join?tab=vet"
+              className="inline-block bg-white/10 hover:bg-white/20 border border-white/20 text-white px-6 py-2 rounded-lg font-semibold transition"
+            >
+              ⚕️ Register as Vet
+            </Link>
+          </div>
         </div>
       </div>
     </div>
