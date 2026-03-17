@@ -30,6 +30,7 @@ export default function VetFinderPage() {
       const { data, error } = await supabase
         .from('vet_clinics')
         .select('*')
+        .not('ssm_number', 'is', null)  // Only show clinics with SSM (real registered)
         .order('name')
 
       if (data) setClinics(data)
