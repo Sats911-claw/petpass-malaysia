@@ -62,9 +62,9 @@ export default function Home() {
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2 mb-8">
+          <div className="inline-flex items-center gap-2 bg-teal-500/20 border border-teal-500/30 rounded-full px-4 py-2 mb-8">
             <span className="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></span>
-            <span className="text-sm text-gray-300">Coming Soon</span>
+            <span className="text-sm text-teal-300">Now Live in Malaysia</span>
           </div>
           
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
@@ -77,52 +77,29 @@ export default function Home() {
             One QR code. Your pet&apos;s full medical history. Instant lost pet alerts.
           </p>
 
-          {/* Waitlist Form */}
+          {/* Sign Up CTA */}
           {submitted ? (
             <div className="bg-teal-900/30 border border-teal-500/30 rounded-2xl p-8 max-w-md mx-auto">
               <div className="text-4xl mb-4">🎉</div>
-              <h3 className="text-xl font-semibold text-white mb-2">You&apos;re on the list!</h3>
-              <p className="text-gray-400">We&apos;ll notify you when PetPass launches in Malaysia.</p>
+              <h3 className="text-xl font-semibold text-white mb-2">Welcome to PetPass!</h3>
+              <p className="text-gray-400">Start managing your pet's health today.</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-              <div className="space-y-4">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Your name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="email"
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all"
-                  />
-                </div>
-                {error && (
-                  <p className="text-red-400 text-sm">{error}</p>
-                )}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-teal-600 hover:bg-teal-700 disabled:bg-teal-800 text-white font-semibold py-4 px-6 rounded-xl transition-all transform hover:scale-[1.02] disabled:transform-none"
-                >
-                  {loading ? 'Joining...' : 'Join the Waitlist — It\'s Free'}
-                </button>
-              </div>
-            </form>
+            <div className="max-w-md mx-auto space-y-4">
+              <a
+                href="/login"
+                className="block w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-4 px-6 rounded-xl transition-all transform hover:scale-[1.02] text-center"
+              >
+              🐾 Sign Up Free — Start Managing Your Pet
+              </a>
+              <p className="text-gray-500 text-sm">
+                Already have an account? <a href="/login" className="text-teal-400 hover:underline">Log in</a>
+              </p>
+            </div>
           )}
 
           <p className="text-gray-500 text-sm mt-6">
-            Join 500+ Malaysian pet owners on the waitlist
+            Join 500+ Malaysian pet owners already using PetPass
           </p>
         </div>
       </section>
@@ -266,6 +243,16 @@ export default function Home() {
             <div className="text-gray-500 text-sm">
               © 2026 petpass.my | contact@petpass.my
             </div>
+          </div>
+          {/* Admin Portal — bottom left */}
+          <div className="mt-8 flex justify-start">
+            <a
+              href="/admin"
+              className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-teal-500/50 text-gray-400 hover:text-white px-4 py-2.5 rounded-lg transition-all duration-200 text-sm font-medium"
+            >
+              <span>🔐</span>
+              <span>Admin Portal</span>
+            </a>
           </div>
         </div>
       </footer>
