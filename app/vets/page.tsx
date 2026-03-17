@@ -375,21 +375,25 @@ export default function VetsDirectoryPage() {
           })}
         </div>
 
-        {filteredVets.length === 0 && (
+        {filteredVets.length === 0 && !loading && (
           <div className="text-center py-16">
-            <div className="text-5xl mb-4">🔍</div>
-            <p className="text-white/50 text-lg">No vets found matching your criteria</p>
-            <button
-              onClick={() => {
-                setAnimalFilter('all')
-                setSpecialityFilter('')
-                setOnCallOnly(false)
-                setHouseCallsOnly(false)
-              }}
-              className="mt-4 text-teal-400 hover:text-teal-300"
-            >
-              Clear filters
-            </button>
+            <div className="text-6xl mb-4">🐾</div>
+            <h3 className="text-2xl font-bold text-white mb-2">Vet Network Coming Soon</h3>
+            <p className="text-white/50 text-lg mb-6">We're building Malaysia's largest network of trusted veterinarians.</p>
+            <div className="flex justify-center gap-3">
+              <Link
+                href="/vets/join?tab=clinic"
+                className="inline-block bg-teal-600 hover:bg-teal-500 text-white px-6 py-2 rounded-lg font-semibold transition"
+              >
+                🏥 Register Clinic
+              </Link>
+              <Link
+                href="/vets/join?tab=vet"
+                className="inline-block bg-white/10 hover:bg-white/20 border border-white/20 text-white px-6 py-2 rounded-lg font-semibold transition"
+              >
+                ⚕️ Register as Vet
+              </Link>
+            </div>
           </div>
         )}
 
