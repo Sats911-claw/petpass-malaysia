@@ -11,7 +11,7 @@ const supabase = createClient(
 const SUPERADMIN_USERNAME = 'sats911'
 const SUPERADMIN_PASSWORD = 'Pagani911$'
 
-type Tab = 'overview' | 'users' | 'pets' | 'clinics' | 'waitlist' | 'merchants' | 'admin-users' | 'audit-log'
+type Tab = 'overview' | 'users' | 'pets' | 'clinics'  | 'merchants' | 'admin-users' | 'audit-log'
 type Role = 'superadmin' | 'editor' | 'viewer'
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -98,7 +98,7 @@ export default function AdminPage() {
   async function fetchAll() {
     setLoading(true)
     const [wl, pt, mc, cl, vx, mr, fr, au, al] = await Promise.all([
-      supabase.from('waitlist').select('*').order('created_at', { ascending: false }),
+      
       supabase.from('pets').select('*').order('created_at', { ascending: false }),
       supabase.from('merchants').select('*').order('created_at', { ascending: false }),
       supabase.from('vet_clinics').select('*').order('created_at', { ascending: false }),

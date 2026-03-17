@@ -1,45 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-
 export default function Home() {
-  const [email, setEmail] = useState('')
-  const [name, setName] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState('')
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-
-    try {
-      const response = await fetch('/api/waitlist', {
-        method: 'POST',
-        body: JSON.stringify({ name, email }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        setError(data.error || 'Something went wrong. Please try again.')
-      } else {
-        setSubmitted(true)
-      }
-    } catch (err) {
-      setError('Unable to connect. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
     <div className="min-h-black">
-      {/*-screen bg Navigation */}
+      {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -78,29 +42,17 @@ export default function Home() {
           </p>
 
           {/* Sign Up CTA */}
-          {submitted ? (
-            <div className="bg-teal-900/30 border border-teal-500/30 rounded-2xl p-8 max-w-md mx-auto">
-              <div className="text-4xl mb-4">🎉</div>
-              <h3 className="text-xl font-semibold text-white mb-2">Welcome to PetPass!</h3>
-              <p className="text-gray-400">Start managing your pet's health today.</p>
-            </div>
-          ) : (
-            <div className="max-w-md mx-auto space-y-4">
-              <a
-                href="/login"
-                className="block w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-4 px-6 rounded-xl transition-all transform hover:scale-[1.02] text-center"
-              >
+          <div className="max-w-md mx-auto">
+            <a
+              href="/login"
+              className="block w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-4 px-6 rounded-xl transition-all transform hover:scale-[1.02] text-center"
+            >
               🐾 Sign Up Free — Start Managing Your Pet
-              </a>
-              <p className="text-gray-500 text-sm">
-                Already have an account? <a href="/login" className="text-teal-400 hover:underline">Log in</a>
-              </p>
-            </div>
-          )}
-
-          <p className="text-gray-500 text-sm mt-6">
-            Join 500+ Malaysian pet owners already using PetPass
-          </p>
+            </a>
+            <p className="text-gray-500 text-sm mt-4">
+              Already have an account? <a href="/login" className="text-teal-400 hover:underline">Log in</a>
+            </p>
+          </div>
         </div>
       </section>
 
@@ -148,7 +100,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Solution Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-16">
@@ -160,74 +112,58 @@ export default function Home() {
             <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-teal-500/50 transition-colors">
               <div className="text-4xl mb-4">🐾</div>
               <h3 className="text-lg font-semibold text-white mb-2">PetPass Profile</h3>
-              <p className="text-gray-400 text-sm">
-                Complete digital profile for each pet with photos, breed, microchip, and all essential details.
-              </p>
+              <p className="text-gray-400 text-sm">Complete digital profile for each pet with photos, breed, microchip, and all essential details.</p>
             </div>
 
             {/* Feature 2 */}
             <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-teal-500/50 transition-colors">
               <div className="text-4xl mb-4">💉</div>
               <h3 className="text-lg font-semibold text-white mb-2">Vaccination Records</h3>
-              <p className="text-gray-400 text-sm">
-                Never lose track of vaccinations again. Digital records with automatic reminders for boosters.
-              </p>
+              <p className="text-gray-400 text-sm">Never lose track of vaccinations again. Digital records with automatic reminders for boosters.</p>
             </div>
 
             {/* Feature 3 */}
             <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-teal-500/50 transition-colors">
               <div className="text-4xl mb-4">🚨</div>
               <h3 className="text-lg font-semibold text-white mb-2">Lost Pet Alert</h3>
-              <p className="text-gray-400 text-sm">
-                Instant alerts to all PetPass users when your pet goes missing. Community-powered finding.
-              </p>
+              <p className="text-gray-400 text-sm">Instant alerts to all PetPass users when your pet goes missing. Community-powered finding.</p>
             </div>
 
             {/* Feature 4 */}
             <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-teal-500/50 transition-colors">
               <div className="text-4xl mb-4">📍</div>
               <h3 className="text-lg font-semibold text-white mb-2">Pet-Friendly Map</h3>
-              <p className="text-gray-400 text-sm">
-                Discover pet-friendly cafes, parks, groomers, and vets in your area across Malaysia.
-              </p>
+              <p className="text-gray-400 text-sm">Discover pet-friendly cafes, parks, groomers, and vets in your area across Malaysia.</p>
             </div>
 
             {/* Feature 5 */}
             <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-teal-500/50 transition-colors">
               <div className="text-4xl mb-4">🩺</div>
               <h3 className="text-lg font-semibold text-white mb-2">Vet Finder</h3>
-              <p className="text-gray-400 text-sm">
-                Find trusted veterinarians near you with ratings, reviews, and clinic information.
-              </p>
+              <p className="text-gray-400 text-sm">Find trusted veterinarians near you with ratings, reviews, and clinic information.</p>
             </div>
 
             {/* Feature 6 */}
             <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-teal-500/50 transition-colors">
               <div className="text-4xl mb-4">📜</div>
               <h3 className="text-lg font-semibold text-white mb-2">License Tracker</h3>
-              <p className="text-gray-400 text-sm">
-                Track and renew your pet&apos;s municipal license with automatic reminders before expiry.
-              </p>
+              <p className="text-gray-400 text-sm">Track and renew your pet&apos;s municipal license with automatic reminders before expiry.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Social Proof */}
+      {/* CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent to-teal-900/20">
         <div className="max-w-4xl mx-auto text-center">
           <div className="text-6xl mb-6">🇲🇾</div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-            Built for Malaysian Pet Owners
-          </h2>
-          <p className="text-gray-400 text-lg mb-8">
-            Join 500+ Malaysian pet owners already on the waitlist
-          </p>
-          <a
-            href="#waitlist"
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Built for Malaysian Pet Owners</h2>
+          <p className="text-gray-400 text-lg mb-8">Join thousands of Malaysian pet owners already using PetPass</p>
+          <a 
+            href="/login" 
             className="inline-block bg-teal-600 hover:bg-teal-700 text-white font-semibold py-4 px-8 rounded-full transition-all transform hover:scale-105"
           >
-            Join the Waitlist
+            Get Started Free
           </a>
         </div>
       </section>
@@ -240,16 +176,10 @@ export default function Home() {
               <span className="text-xl">🐾</span>
               <span className="text-lg font-bold text-white">PetPass Malaysia</span>
             </div>
-            <div className="text-gray-500 text-sm">
-              © 2026 petpass.my | contact@petpass.my
-            </div>
+            <div className="text-gray-500 text-sm">© 2026 petpass.my | contact@petpass.my</div>
           </div>
-          {/* Admin Portal — bottom left */}
           <div className="mt-8 flex justify-start">
-            <a
-              href="/admin"
-              className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-teal-500/50 text-gray-400 hover:text-white px-4 py-2.5 rounded-lg transition-all duration-200 text-sm font-medium"
-            >
+            <a href="/admin" className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-teal-500/50 text-gray-400 hover:text-white px-4 py-2.5 rounded-lg transition-all duration-200 text-sm font-medium">
               <span>🔐</span>
               <span>Admin Portal</span>
             </a>
